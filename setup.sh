@@ -60,13 +60,23 @@ backup_file() {
   echo "setup: backed up existing $src to $bak"
 }
 
+# Capture first-run state before configure_chezmoi creates the config.
+# On re-runs the dotfiles are already chezmoi-managed, so backing them up
+# would snapshot the managed versions and uninstall would restore those
+# instead of cleanly removing the files.
+chezmoi_cfg="$HOME/.config/chezmoi/chezmoi.toml"
+is_first_run=0
+[ ! -f "$chezmoi_cfg" ] && is_first_run=1
+
 install_chezmoi
 # Make sure the just-installed binary is resolvable for the apply step,
 # regardless of whether chezmoi was already on PATH elsewhere.
 export PATH="$BIN_DIR:$PATH"
 configure_chezmoi
-backup_file "$HOME/.zshrc"
-backup_file "$HOME/.bash_profile"
+if [ "$is_first_run" = "1" ]; then
+  backup_file "$HOME/.zshrc"
+  backup_file "$HOME/.bash_profile"
+fi
 chezmoi apply
 
 echo "setup: done. Start a new shell or 'source ~/.zshrc' (or ~/.bash_profile) to pick up changes."
