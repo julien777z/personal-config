@@ -20,7 +20,7 @@ Installs chezmoi to `~/.local/bin`, points it at this repo, and applies the conf
 
 ## Adding a function
 
-Drop a new `*.sh` into `dot_config/shell-functions/` and run `bash-update` (or `chezmoi apply`). Functions must be bash-3.2 compatible (macOS's system bash) if you want them to work from `.bash_profile` as well as zsh, and avoid `path` as a variable name (it's a tied array in zsh).
+Drop a new `*.sh` into `dot_config/shell-functions/` and run `bash-update` (or `chezmoi apply`). Functions must be bash-3.2 compatible (macOS's system bash) if you want them to work from `.bash_profile` as well as zsh, and avoid `path` / `match` as variable names (both are special in zsh and cause `read` to silently fail).
 
 ## Deleting or renaming a function
 
