@@ -1,0 +1,8 @@
+# Source every *.sh dropped in by chezmoi.
+# The readability guard also protects against a literal '*.sh' when the dir is empty.
+for f in "$HOME/.config/shell-functions"/*.sh; do
+  [ -r "$f" ] && . "$f"
+done
+unset f
+
+# Put personal bash_profile additions below this line.

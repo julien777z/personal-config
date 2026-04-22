@@ -6,7 +6,7 @@ dedup() {
   local path
   while IFS= read -r -d '' path; do
     matches+=("$path")
-  done < <(find . -depth -E -regex '.*/[^/]* [0-9]+' -print0 2>/dev/null)
+  done < <(find -E . -depth -regex '.*/[^/]* [0-9]+' -print0 2>/dev/null)
 
   local total=${#matches[@]}
   if [ "$total" -eq 0 ]; then
