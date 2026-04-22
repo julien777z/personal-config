@@ -1,11 +1,15 @@
 # Recursively delete files/folders whose name ends with " {n}" (space + number),
 # which is the naming pattern macOS uses for duplicates created from git repos.
 # Prints a preview (up to 50 entries) and asks for confirmation before deleting.
+#
+# Note: we avoid naming the loop variable `path` because in zsh `path` is a
+# special array tied to `$PATH`, and `read -r path` silently fails to assign,
+# producing zero matches.
 dedup() {
   local -a matches=()
-  local path
-  while IFS= read -r -d '' path; do
-    matches+=("$path")
+  local match
+  while IFS= read -r -d '' match; do
+    matches+=("$match")
   done < <(find -E . -depth -regex '.*/[^/]* [0-9]+' -print0 2>/dev/null)
 
   local total=${#matches[@]}
@@ -17,9 +21,9 @@ dedup() {
   echo "dedup: found $total item(s) ending in ' {n}' under $(pwd):"
   echo
   local shown=0
-  for path in "${matches[@]}"; do
+  for match in "${matches[@]}"; do
     [ "$shown" -ge 50 ] && break
-    echo "  $path"
+    echo "  $match"
     shown=$((shown + 1))
   done
   if [ "$total" -gt 50 ]; then
@@ -32,8 +36,8 @@ dedup() {
   read -r reply
   case "$reply" in
     [yY]|[yY][eE][sS])
-      for path in "${matches[@]}"; do
-        rm -rf -- "$path"
+      for match in "${matches[@]}"; do
+        rm -rf -- "$match"
       done
       echo "dedup: deleted $total item(s)."
       ;;
