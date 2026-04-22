@@ -2,7 +2,7 @@
 # become available without closing the terminal tab. Keeps cwd and exported
 # env vars; drops shell-local state (defined-at-runtime aliases/functions,
 # unsaved history lines, background jobs).
-reload-bash() {
+bash-reload() {
   if [ -n "${ZSH_VERSION:-}" ]; then
     exec zsh
   elif [ -n "${BASH_VERSION:-}" ]; then

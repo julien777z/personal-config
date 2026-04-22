@@ -20,17 +20,17 @@ Installs chezmoi to `~/.local/bin`, points it at this repo, and applies the conf
 
 ## Adding a function
 
-Drop a new `*.sh` into `dot_config/shell-functions/` and run `update-bash` (or `chezmoi apply`). Functions must be bash-3.2 compatible (macOS's system bash) if you want them to work from `.bash_profile` as well as zsh, and avoid `path` as a variable name (it's a tied array in zsh).
+Drop a new `*.sh` into `dot_config/shell-functions/` and run `bash-update` (or `chezmoi apply`). Functions must be bash-3.2 compatible (macOS's system bash) if you want them to work from `.bash_profile` as well as zsh, and avoid `path` as a variable name (it's a tied array in zsh).
 
 ## Pulling updates
 
 ```
-update-bash
+bash-update
 ```
 
-Defined in `dot_config/shell-functions/update-bash.sh`. Does `git pull` in the repo (via `chezmoi source-path`) then `chezmoi apply`.
+Defined in `dot_config/shell-functions/bash-update.sh`. Does `git pull` in the repo (via `chezmoi source-path`), `chezmoi apply`, then `bash-reload`.
 
-After adding or editing a function, `reload-bash` (defined in `reload-bash.sh`) re-execs the current shell so the new definitions are picked up without closing the tab.
+After adding or editing a function, `bash-reload` (defined in `bash-reload.sh`) re-execs the current shell so the new definitions are picked up without closing the tab.
 
 ## Uninstall
 
