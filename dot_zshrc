@@ -1,0 +1,8 @@
+# Source every *.sh dropped in by chezmoi.
+# (N) is the zsh null-glob qualifier: expand to nothing if the dir is empty or missing.
+for f in $HOME/.config/shell-functions/*.sh(N); do
+  source "$f"
+done
+unset f
+
+# Put personal zshrc additions below this line.
