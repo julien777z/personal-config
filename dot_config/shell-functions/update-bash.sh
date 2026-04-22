@@ -20,4 +20,5 @@ update-bash() {
   fi
   echo "update-bash: running chezmoi apply"
   chezmoi apply
+  reload-bash
 }
