@@ -39,9 +39,13 @@ configure_chezmoi() {
     echo "setup: update it manually to: $line" >&2
     return 1
   fi
-  # Existing config without a sourceDir line — append, don't truncate.
-  printf '\n%s\n' "$line" >> "$cfg_file"
-  echo "setup: appended sourceDir to $cfg_file"
+  # Existing config without a sourceDir line — prepend so it stays at the
+  # TOML root, even if the file already has [section] headers.
+  local tmp
+  tmp=$(mktemp)
+  { printf '%s\n' "$line"; cat "$cfg_file"; } > "$tmp"
+  mv "$tmp" "$cfg_file"
+  echo "setup: prepended sourceDir to $cfg_file"
 }
 
 backup_file() {
@@ -67,5 +71,7 @@ chezmoi apply
 
 echo "setup: done. Start a new shell or 'source ~/.zshrc' (or ~/.bash_profile) to pick up changes."
 for bak in "$HOME/.zshrc.pre-chezmoi.bak" "$HOME/.bash_profile.pre-chezmoi.bak"; do
-  [ -e "$bak" ] && echo "setup: review $bak and fold any customizations into $REPO_DIR/"
+  if [ -e "$bak" ]; then
+    echo "setup: review $bak and fold any customizations into $REPO_DIR/"
+  fi
 done
