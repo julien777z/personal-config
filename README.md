@@ -30,6 +30,8 @@ update-bash
 
 Defined in `dot_config/shell-functions/update-bash.sh`. Does `git pull` in the repo (via `chezmoi source-path`) then `chezmoi apply`.
 
+After adding or editing a function, `reload-bash` (defined in `reload-bash.sh`) re-execs the current shell so the new definitions are picked up without closing the tab.
+
 ## Uninstall
 
 ```
