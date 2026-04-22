@@ -21,3 +21,11 @@ Installs chezmoi to `~/.local/bin`, points it at this repo, and applies the conf
 ## Adding a function
 
 Drop a new `*.sh` into `dot_config/shell-functions/` and run `chezmoi apply`. Functions must be bash-3.2 compatible (macOS's system bash) if you want them to work from `.bash_profile` as well as zsh.
+
+## Uninstall
+
+```
+bash uninstall.sh
+```
+
+Restores `~/.zshrc` and `~/.bash_profile` from their `*.pre-chezmoi.bak` backups (or removes them if no backup exists), removes `~/.config/shell-functions/`, and removes `~/.config/chezmoi/`. Leaves this repo and the chezmoi binary (`~/.local/bin/chezmoi`) alone.
