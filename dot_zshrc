@@ -1,0 +1,9 @@
+# Source every *.sh dropped in by chezmoi.
+if [ -d "$HOME/.config/zsh-functions" ]; then
+  for f in "$HOME/.config/zsh-functions"/*.sh; do
+    [ -r "$f" ] && source "$f"
+  done
+  unset f
+fi
+
+# Put personal zshrc additions below this line.

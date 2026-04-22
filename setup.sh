@@ -1,54 +1,57 @@
 #!/usr/bin/env bash
-# Install every file in terminal/ into ~/.zshrc between managed markers.
-# Idempotent: re-running replaces the previously installed block.
+# Install chezmoi, point it at this repo, and apply. Idempotent; macOS-only.
 
 set -euo pipefail
 
-ZSHRC="${ZSHRC:-$HOME/.zshrc}"
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TERMINAL_DIR="$REPO_DIR/terminal"
-BEGIN_MARKER="# >>> personal-config >>>"
-END_MARKER="# <<< personal-config <<<"
+BIN_DIR="$HOME/.local/bin"
+CHEZMOI="$BIN_DIR/chezmoi"
 
-if [ ! -d "$TERMINAL_DIR" ]; then
-  echo "setup: $TERMINAL_DIR not found" >&2
-  exit 1
+install_chezmoi() {
+  if command -v chezmoi >/dev/null 2>&1; then
+    echo "setup: chezmoi already installed at $(command -v chezmoi)"
+    return
+  fi
+  if [ -x "$CHEZMOI" ]; then
+    echo "setup: chezmoi already installed at $CHEZMOI"
+    return
+  fi
+  mkdir -p "$BIN_DIR"
+  echo "setup: installing chezmoi to $BIN_DIR"
+  sh -c "$(curl -fsLS https://get.chezmoi.io)" -- -b "$BIN_DIR"
+}
+
+configure_chezmoi() {
+  local cfg_dir="$HOME/.config/chezmoi"
+  local cfg_file="$cfg_dir/chezmoi.toml"
+  local line="sourceDir = \"$REPO_DIR\""
+  mkdir -p "$cfg_dir"
+  if [ -f "$cfg_file" ] && grep -qxF "$line" "$cfg_file"; then
+    echo "setup: chezmoi sourceDir already $REPO_DIR"
+    return
+  fi
+  echo "$line" > "$cfg_file"
+  echo "setup: wrote $cfg_file"
+}
+
+backup_zshrc() {
+  local zshrc="$HOME/.zshrc"
+  local bak="$HOME/.zshrc.pre-chezmoi.bak"
+  [ -f "$zshrc" ] || return 0
+  if [ -e "$bak" ]; then
+    echo "setup: $bak already exists; leaving it alone"
+    return
+  fi
+  cp -p "$zshrc" "$bak"
+  echo "setup: backed up existing ~/.zshrc to $bak"
+}
+
+install_chezmoi
+configure_chezmoi
+backup_zshrc
+"$CHEZMOI" apply
+
+echo "setup: done. Start a new shell or 'source ~/.zshrc' to pick up changes."
+if [ -e "$HOME/.zshrc.pre-chezmoi.bak" ]; then
+  echo "setup: review ~/.zshrc.pre-chezmoi.bak and fold any customizations into $REPO_DIR/dot_zshrc"
 fi
-
-shopt -s nullglob
-files=("$TERMINAL_DIR"/*.sh)
-shopt -u nullglob
-
-if [ ${#files[@]} -eq 0 ]; then
-  echo "setup: no .sh files in $TERMINAL_DIR" >&2
-  exit 1
-fi
-
-touch "$ZSHRC"
-
-# Strip any previously installed block so this is idempotent.
-if grep -qF "$BEGIN_MARKER" "$ZSHRC"; then
-  tmp=$(mktemp)
-  awk -v begin="$BEGIN_MARKER" -v end="$END_MARKER" '
-    $0 == begin { skip=1; next }
-    skip && $0 == end { skip=0; next }
-    !skip { print }
-  ' "$ZSHRC" > "$tmp"
-  mv "$tmp" "$ZSHRC"
-fi
-
-{
-  echo ""
-  echo "$BEGIN_MARKER"
-  echo "# Managed by personal-config ($REPO_DIR)."
-  echo "# Do not edit between these markers; re-run setup.sh to update."
-  for f in "${files[@]}"; do
-    echo ""
-    echo "# --- $(basename "$f") ---"
-    cat "$f"
-  done
-  echo "$END_MARKER"
-} >> "$ZSHRC"
-
-echo "setup: installed ${#files[@]} file(s) from terminal/ into $ZSHRC"
-echo "setup: run 'source $ZSHRC' or restart your shell to pick up changes."

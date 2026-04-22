@@ -3,17 +3,10 @@
 # Prints a preview (up to 50 entries) and asks for confirmation before deleting.
 dedup() {
   local -a matches=()
-  local find_cmd
-  if find --version 2>/dev/null | grep -q GNU; then
-    find_cmd=(find . -depth -regextype posix-extended -regex '.*/[^/]* [0-9]+' -print0)
-  else
-    find_cmd=(find . -depth -E -regex '.*/[^/]* [0-9]+' -print0)
-  fi
-
   local path
   while IFS= read -r -d '' path; do
     matches+=("$path")
-  done < <("${find_cmd[@]}" 2>/dev/null)
+  done < <(find . -depth -E -regex '.*/[^/]* [0-9]+' -print0 2>/dev/null)
 
   local total=${#matches[@]}
   if [ "$total" -eq 0 ]; then
