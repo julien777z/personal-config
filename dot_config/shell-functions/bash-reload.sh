@@ -6,7 +6,7 @@ bash-reload() {
   if [ -n "${ZSH_VERSION:-}" ]; then
     exec zsh
   elif [ -n "${BASH_VERSION:-}" ]; then
-    exec bash
+    exec bash -l
   else
     exec "${SHELL:-sh}"
   fi

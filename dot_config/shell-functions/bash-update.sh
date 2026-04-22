@@ -19,6 +19,9 @@ bash-update() {
     }
   fi
   echo "bash-update: running chezmoi apply"
-  chezmoi apply
+  chezmoi apply || {
+    echo "bash-update: chezmoi apply failed; not reloading" >&2
+    return 1
+  }
   bash-reload
 }
