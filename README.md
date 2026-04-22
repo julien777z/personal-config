@@ -10,7 +10,7 @@ Uses [chezmoi](https://www.chezmoi.io/) for dotfile managment.
 bash setup.sh
 ```
 
-Installs chezmoi to `~/.local/bin`, points it at this repo, and applies the config. Existing `~/.zshrc` and/or `~/.bash_profile` are backed up to `*.pre-chezmoi.bak` on first run.
+Installs chezmoi to `~/.local/bin`, points it at this repo, and applies the config. Existing `~/.zshrc` and/or `~/.bash_profile` are backed up to `*.pre-chezmoi.bak` on first run. If you cloned this repo somewhere other than `~/personal-config`, setup also creates a symlink so that path resolves.
 
 ## Layout
 
@@ -20,7 +20,15 @@ Installs chezmoi to `~/.local/bin`, points it at this repo, and applies the conf
 
 ## Adding a function
 
-Drop a new `*.sh` into `dot_config/shell-functions/` and run `chezmoi apply`. Functions must be bash-3.2 compatible (macOS's system bash) if you want them to work from `.bash_profile` as well as zsh.
+Drop a new `*.sh` into `dot_config/shell-functions/` and run `update-bash` (or `chezmoi apply`). Functions must be bash-3.2 compatible (macOS's system bash) if you want them to work from `.bash_profile` as well as zsh, and avoid `path` as a variable name (it's a tied array in zsh).
+
+## Pulling updates
+
+```
+update-bash
+```
+
+Defined in `dot_config/shell-functions/update-bash.sh`. Does `git pull` in the repo (via `chezmoi source-path`) then `chezmoi apply`.
 
 ## Uninstall
 
