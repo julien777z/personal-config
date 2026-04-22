@@ -22,6 +22,16 @@ Installs chezmoi to `~/.local/bin`, points it at this repo, and applies the conf
 
 Drop a new `*.sh` into `dot_config/shell-functions/` and run `bash-update` (or `chezmoi apply`). Functions must be bash-3.2 compatible (macOS's system bash) if you want them to work from `.bash_profile` as well as zsh, and avoid `path` as a variable name (it's a tied array in zsh).
 
+## Deleting or renaming a function
+
+chezmoi doesn't remove old targets when you delete or rename a source file — you have to tell it explicitly. Add the old target path (relative to `$HOME`) to `.chezmoiremove` in the same commit:
+
+```
+.config/shell-functions/old-name.sh
+```
+
+`chezmoi apply` will then delete it on every machine. It's idempotent — safe to leave in the file permanently.
+
 ## Pulling updates
 
 ```
