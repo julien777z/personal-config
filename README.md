@@ -1,6 +1,8 @@
-# personal-config
+# Personal Config
 
-My macOS dotfiles, managed with [chezmoi](https://www.chezmoi.io/).
+Utilities I use often.
+
+Uses [chezmoi](https://www.chezmoi.io/) for dotfile managment.
 
 ## Install
 
