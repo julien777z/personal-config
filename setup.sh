@@ -5,7 +5,6 @@ set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BIN_DIR="$HOME/.local/bin"
-CANONICAL_REPO="$HOME/personal-config"
 
 install_chezmoi() {
   if command -v chezmoi >/dev/null 2>&1; then
@@ -61,36 +60,10 @@ backup_file() {
   echo "setup: backed up existing $src to $bak"
 }
 
-# Ensure `~/personal-config` resolves to this repo, so `update-bash`, the
-# README instructions, and muscle memory all work regardless of where the
-# repo was actually cloned.
-ensure_canonical_repo() {
-  if [ "$REPO_DIR" = "$CANONICAL_REPO" ]; then
-    return
-  fi
-  if [ -L "$CANONICAL_REPO" ]; then
-    local target
-    target=$(readlink "$CANONICAL_REPO")
-    if [ "$target" = "$REPO_DIR" ]; then
-      echo "setup: $CANONICAL_REPO already symlinked to $REPO_DIR"
-      return
-    fi
-    echo "setup: $CANONICAL_REPO is a symlink to $target; leaving it alone" >&2
-    return
-  fi
-  if [ -e "$CANONICAL_REPO" ]; then
-    echo "setup: $CANONICAL_REPO exists and isn't a symlink; leaving it alone" >&2
-    return
-  fi
-  ln -s "$REPO_DIR" "$CANONICAL_REPO"
-  echo "setup: symlinked $CANONICAL_REPO -> $REPO_DIR"
-}
-
 install_chezmoi
 # Make sure the just-installed binary is resolvable for the apply step,
 # regardless of whether chezmoi was already on PATH elsewhere.
 export PATH="$BIN_DIR:$PATH"
-ensure_canonical_repo
 configure_chezmoi
 backup_file "$HOME/.zshrc"
 backup_file "$HOME/.bash_profile"

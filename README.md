@@ -10,7 +10,7 @@ Uses [chezmoi](https://www.chezmoi.io/) for dotfile managment.
 bash setup.sh
 ```
 
-Installs chezmoi to `~/.local/bin`, points it at this repo, and applies the config. Existing `~/.zshrc` and/or `~/.bash_profile` are backed up to `*.pre-chezmoi.bak` on first run. If you cloned this repo somewhere other than `~/personal-config`, setup also creates a symlink so that path resolves.
+Installs chezmoi to `~/.local/bin`, points it at this repo, and applies the config. Existing `~/.zshrc` and/or `~/.bash_profile` are backed up to `*.pre-chezmoi.bak` on first run.
 
 ## Layout
 
