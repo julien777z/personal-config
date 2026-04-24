@@ -6,7 +6,7 @@ git-reset() {
   fi
 
   echo
-  if ! shell_confirm_default_no "Wipe uncommitted changes and remove untracked files/dirs (git reset --hard; git clean -fd)?"; then
+  if ! shell_confirm_default_no "Wipe uncommitted changes and remove untracked files/dirs?"; then
     echo "git-reset: cancelled."
     return 0
   fi
