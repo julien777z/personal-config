@@ -16,11 +16,12 @@ Installs chezmoi to `~/.local/bin`, points it at this repo, and applies the conf
 
 - `dot_zshrc` → `~/.zshrc`
 - `dot_bash_profile` → `~/.bash_profile`
-- `dot_config/shell-functions/*.sh` → `~/.config/shell-functions/*.sh` (sourced by both the zsh and bash entry points)
+- `dot_config/shell-functions/shared/*.sh` → `~/.config/shell-functions/shared/*.sh` (sourced first by both entry points, for helpers used by other scripts)
+- `dot_config/shell-functions/*.sh` → `~/.config/shell-functions/*.sh` (sourced after `shared/`, by both the zsh and bash entry points)
 
 ## Adding a function
 
-Drop a new `*.sh` into `dot_config/shell-functions/` and run `bash-update` (or `chezmoi apply`). Functions must be bash-3.2 compatible (macOS's system bash) if you want them to work from `.bash_profile` as well as zsh, and avoid `path` / `match` as variable names (both are special in zsh and cause `read` to silently fail).
+Drop a new `*.sh` into `dot_config/shell-functions/` and run `bash-update` (or `chezmoi apply`). Put cross-cutting helpers (for example prompts shared by several commands) under `dot_config/shell-functions/shared/` so they load before the top-level scripts. Functions must be bash-3.2 compatible (macOS's system bash) if you want them to work from `.bash_profile` as well as zsh, and avoid `path` / `match` as variable names (both are special in zsh and cause `read` to silently fail).
 
 ## Deleting or renaming a function
 
