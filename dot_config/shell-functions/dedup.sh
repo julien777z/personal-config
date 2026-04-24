@@ -31,18 +31,14 @@ dedup() {
   fi
 
   echo
-  printf "Delete all %d item(s)? [y/N] " "$total"
-  local reply
-  read -r reply
-  case "$reply" in
-    [yY]|[yY][eE][sS])
-      for item in "${matches[@]}"; do
-        rm -rf -- "$item"
-      done
-      echo "dedup: deleted $total item(s)."
-      ;;
-    *)
-      echo "dedup: cancelled."
-      ;;
-  esac
+  local q
+  q=$(printf "Delete all %d item(s)?" "$total")
+  if shell_confirm_default_no "$q"; then
+    for item in "${matches[@]}"; do
+      rm -rf -- "$item"
+    done
+    echo "dedup: deleted $total item(s)."
+  else
+    echo "dedup: cancelled."
+  fi
 }
