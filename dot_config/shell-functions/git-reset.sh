@@ -1,7 +1,7 @@
 # Reset the working tree to HEAD and remove untracked files/dirs.
 git-reset() {
   if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-    echo "git-reset: not inside a git work tree."
+    echo "git-reset: not inside a git work tree." >&2
     return 1
   fi
 
@@ -14,7 +14,7 @@ git-reset() {
   if git reset --hard HEAD && git clean -fd; then
     echo "git-reset: done."
   else
-    echo "git-reset: a git command failed."
+    echo "git-reset: a git command failed." >&2
     return 1
   fi
 }
