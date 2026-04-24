@@ -1,6 +1,5 @@
 # Refresh the shell config: git pull in the personal-config repo (if it is one),
 # then `chezmoi apply` to copy the latest versions into place.
-# Named "bash-update" because that's easier to remember than "chezmoi apply".
 bash-update() {
   if ! command -v chezmoi >/dev/null 2>&1; then
     echo "bash-update: chezmoi not on PATH (did you run setup.sh?)" >&2
