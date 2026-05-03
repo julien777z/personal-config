@@ -75,9 +75,12 @@ _poetry_targets_for() {
     hit && /^[ \t]+-[ \t]/ {
       cmd = $0
       sub(/^[ \t]+-[ \t]+/, "", cmd)
-      sub(/[ \t]+#.*$/, "", cmd)
       if (cmd ~ /^".*"$/ || cmd ~ /^\047.*\047$/) {
+        # Fully quoted: take the content verbatim. A `#` inside the
+        # quotes is part of the command, not a YAML comment.
         cmd = substr(cmd, 2, length(cmd) - 2)
+      } else {
+        sub(/[ \t]+#.*$/, "", cmd)
       }
       print cmd
     }
