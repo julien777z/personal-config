@@ -112,19 +112,29 @@ _poetry_read_key_into() {
     IFS= read -rsn1 _b1 </dev/tty
   fi
   if [ "$_b1" = $'\033' ]; then
+    # Continuation bytes for an arrow-key sequence arrive immediately after
+    # ESC; bare Esc has nothing more to read. A short timeout lets us tell
+    # the two apart without hanging. (bash 3.2 only accepts integer -t.)
     if [ -n "${ZSH_VERSION:-}" ]; then
-      read -s -k 1 _b2 </dev/tty
-      read -s -k 1 _b3 </dev/tty
+      read -s -k 1 -t 1 _b2 </dev/tty 2>/dev/null
+      read -s -k 1 -t 1 _b3 </dev/tty 2>/dev/null
     else
-      IFS= read -rsn1 _b2 </dev/tty
-      IFS= read -rsn1 _b3 </dev/tty
+      IFS= read -rsn1 -t 1 _b2 </dev/tty
+      IFS= read -rsn1 -t 1 _b3 </dev/tty
     fi
-    case "$_b2$_b3" in
-      '[A') eval "$1=UP" ;;
-      '[B') eval "$1=DOWN" ;;
-      *)    eval "$1=OTHER" ;;
-    esac
-  elif [ -z "$_b1" ]; then
+    if [ -z "$_b2" ]; then
+      # Bare Esc.
+      eval "$1=QUIT"
+    else
+      case "$_b2$_b3" in
+        '[A') eval "$1=UP" ;;
+        '[B') eval "$1=DOWN" ;;
+        *)    eval "$1=OTHER" ;;
+      esac
+    fi
+  elif [ -z "$_b1" ] || [ "$_b1" = $'\n' ] || [ "$_b1" = $'\r' ]; then
+    # bash's `read -rsn1` swallows the newline via $IFS and leaves _b1
+    # empty; zsh's `read -k 1` returns the literal $'\n' / $'\r'.
     eval "$1=ENTER"
   else
     case "$_b1" in
@@ -138,6 +148,14 @@ _poetry_read_key_into() {
 # row. Renders the table on /dev/tty and prints the selected name on
 # stdout. Returns non-zero if the user quits (q / Esc).
 _poetry_pick() {
+  # zsh defaults to 1-based arrays; switch this function to 0-based so the
+  # `for ((i = 0; i < count; i++))` loops below index correctly under both
+  # shells. LOCAL_OPTIONS scopes the change to this call frame (and any
+  # function it calls, including the nested `_poetry_pick_draw`).
+  if [ -n "${ZSH_VERSION:-}" ]; then
+    setopt LOCAL_OPTIONS KSH_ARRAYS
+  fi
+
   local -a items
   items=("$@")
   local count=${#items[@]}
@@ -152,6 +170,10 @@ _poetry_pick() {
   local cur=0 key
   printf 'Select a Poetry script (arrow keys to move, Enter to run, q to cancel):\n' >/dev/tty
   printf '\033[?25l' >/dev/tty
+  # Restore cursor visibility if the user hits Ctrl+C or the shell sends
+  # us a TERM. Without this the cursor stays hidden for the rest of the
+  # session.
+  trap 'printf "\033[?25h" >/dev/tty; trap - INT TERM; return 130' INT TERM
 
   _poetry_pick_draw() {
     local j n e
@@ -175,6 +197,7 @@ _poetry_pick() {
       ENTER) break ;;
       QUIT)
         printf '\033[?25h' >/dev/tty
+        trap - INT TERM
         return 1
         ;;
       *) ;;
@@ -183,6 +206,7 @@ _poetry_pick() {
     _poetry_pick_draw
   done
   printf '\033[?25h' >/dev/tty
+  trap - INT TERM
   printf '%s\n' "${items[$cur]%%$'\t'*}"
 }
 
