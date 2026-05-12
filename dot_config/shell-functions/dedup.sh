@@ -1,5 +1,7 @@
-# Recursively delete files/folders whose name ends with " {n}" (space + number),
-# which is the naming pattern macOS uses for duplicates created from git repos.
+# Recursively delete files/folders whose basename looks like a macOS duplicate:
+# something, then a space, then a short counter (1-3 digits), optionally followed
+# by a dot and extension (e.g. "foo 2", "foo 2.html"). Counters longer than three
+# digits are ignored so names like "report 2024.pdf" are not treated as duplicates.
 # Prints a preview (up to 50 entries) and asks for confirmation before deleting.
 #
 # Note: we avoid `path` and `match` as variable names because both are special
@@ -10,7 +12,7 @@ dedup() {
   local item
   while IFS= read -r -d '' item; do
     matches+=("$item")
-  done < <(find -E . -depth -regex '.*/[^/]* [0-9]+' -print0 2>/dev/null)
+  done < <(find -E . -depth -regex '.*/[^/]* [0-9]{1,3}(\.[^/]+)?' -print0 2>/dev/null)
 
   local total=${#matches[@]}
   if [ "$total" -eq 0 ]; then
@@ -18,7 +20,7 @@ dedup() {
     return 0
   fi
 
-  echo "dedup: found $total item(s) ending in ' {n}' under $(pwd):"
+  echo "dedup: found $total item(s) matching macOS duplicate names (... N or ... N.ext, N is 1-3 digits) under $(pwd):"
   echo
   local shown=0
   for item in "${matches[@]}"; do
