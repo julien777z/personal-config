@@ -1,9 +1,6 @@
 # Purge stale remote-tracking refs and re-fetch from origin.
 git-purge() {
-  if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-    echo "git-purge: not inside a git work tree." >&2
-    return 1
-  fi
+  shell_require_git_worktree git-purge || return 1
 
   if rm -rf .git/refs/remotes/origin && \
      mkdir -p .git/refs/remotes/origin && \

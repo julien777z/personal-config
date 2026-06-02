@@ -1,9 +1,6 @@
 # Reset the working tree to HEAD and remove untracked files/dirs.
 git-reset() {
-  if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-    echo "git-reset: not inside a git work tree." >&2
-    return 1
-  fi
+  shell_require_git_worktree git-reset || return 1
 
   echo
   if ! shell_confirm_default_no "Wipe uncommitted changes and remove untracked files/dirs?"; then
