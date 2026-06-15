@@ -55,6 +55,13 @@ if [ -z "$porcelain" ]; then
   fi
 fi
 
+# If the branch's PR has already been merged, the branch is done — there is nothing
+# left to push, so skip the pre-push pass instead of nudging over the merged diff.
+if command -v gh >/dev/null 2>&1 \
+  && [ "$(gh pr view --json state --jq .state 2>/dev/null || echo "")" = "MERGED" ]; then
+  exit 0
+fi
+
 printf '%s' "$state" > "$stamp_file"
 
 echo '{"decision":"block","reason":"Run a LOCAL pre-push pass over the WHOLE branch diff versus the base branch, including uncommitted work — no GitHub PR required. Call the Skill tool with skill=\"code-simplify\" (the project skill, NOT the built-in \"simplify\") over that diff and apply its simplifications directly (no PR, no asking, no branching off, no comment). Commit the edits, and push them if the branch was already pushed. If the branch has no code changes, skip the skill and conclude."}'
