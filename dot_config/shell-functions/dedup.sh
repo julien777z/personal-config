@@ -9,8 +9,16 @@
 # and `(#m)` glob flags), and `read -r` into either can silently fail.
 dedup() {
   local -a matches=()
-  local item
+  local -a skip_dirs=(node_modules .venv)
+  local item skip_dir
   while IFS= read -r -d '' item; do
+    for skip_dir in "${skip_dirs[@]}"; do
+      case "$item" in
+        "./$skip_dir"|"./$skip_dir"/*|"*/$skip_dir"/*)
+          continue 2
+          ;;
+      esac
+    done
     matches+=("$item")
   done < <(find -E . -depth -regex '.*/[^/]* [0-9]{1,3}(\.[^/]+)?' -print0 2>/dev/null)
 
@@ -22,20 +30,15 @@ dedup() {
 
   echo "dedup: found $total item(s) matching macOS duplicate names (... N or ... N.ext, N is 1-3 digits) under $(pwd):"
   echo
-  local shown=0
-  for item in "${matches[@]}"; do
-    [ "$shown" -ge 50 ] && break
+  for item in "${matches[@]:0:50}"; do
     echo "  $item"
-    shown=$((shown + 1))
   done
   if [ "$total" -gt 50 ]; then
     echo "  ...and $((total - 50)) more"
   fi
 
   echo
-  local q
-  q=$(printf "Delete all %d item(s)?" "$total")
-  if shell_confirm_default_no "$q"; then
+  if shell_confirm_default_no "Delete all $total item(s)?"; then
     for item in "${matches[@]}"; do
       rm -rf -- "$item"
     done
