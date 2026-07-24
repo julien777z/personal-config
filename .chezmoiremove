@@ -1,4 +1,5 @@
 .config/shell-functions/update-bash.sh
 .config/shell-functions/reload-bash.sh
+.config/shell-functions/git-purge.sh
 .config/shell-functions/shared/confirm-default-no.sh
 .config/shell-functions/shared/git-require-worktree.sh
