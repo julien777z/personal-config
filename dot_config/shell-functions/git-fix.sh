@@ -1,4 +1,4 @@
-# Quarantine malformed refs, purge remote-tracking refs, and re-fetch from origin.
+# Quarantine malformed refs, purge origin remote-tracking refs, and re-fetch from origin.
 git-fix() {
   shell_require_git_worktree git-fix || return 1
 
@@ -39,7 +39,7 @@ git-fix() {
 
   if rm -rf "$git_common_dir/refs/remotes/origin" && \
      mkdir -p "$git_common_dir/refs/remotes/origin" && \
-     git fetch origin; then
+     git fetch --prune origin; then
     echo "git-fix: done."
   else
     echo "git-fix: a command failed." >&2
