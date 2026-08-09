@@ -5,19 +5,19 @@
       "name": "agent-browser",
       "repo": "vercel-labs/agent-browser",
       "skill": "agent-browser",
-      "automatic_updates": true
+      "update_on_sync": true
     },
     {
       "name": "no-ai-slop",
       "repo": "petergyang/no-ai-slop",
       "skill": "no-ai-slop",
-      "automatic_updates": true
+      "update_on_sync": true
     },
     {
       "name": "security-audit",
       "repo": "cloudflare/security-audit-skill",
       "skill": "security-audit",
-      "automatic_updates": true
+      "update_on_sync": true
     }
   ]
 }
