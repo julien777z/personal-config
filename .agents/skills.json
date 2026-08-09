@@ -12,12 +12,6 @@
       "repo": "petergyang/no-ai-slop",
       "skill": "no-ai-slop",
       "update_on_sync": true
-    },
-    {
-      "name": "security-audit",
-      "repo": "cloudflare/security-audit-skill",
-      "skill": "security-audit",
-      "update_on_sync": true
     }
   ]
 }
