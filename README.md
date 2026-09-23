@@ -45,11 +45,11 @@ After adding or editing a function, `bash-reload` (defined in `bash-reload.sh`) 
 
 ## Shared agent skills
 
-`skills-refresh` maintains a separate checkout under `~/.local/share/agent-skills` and runs its
-installer for local agent skill roots. The LaunchAgent runs it at login and hourly. It only
-fast-forwards a clean `main` checkout; a branch or local edit is left intact. Run
-`~/.local/bin/skills-refresh` to refresh immediately. Edit shared skills on a separate branch or
-worktree in the skills repository.
+`skills-refresh` maintains a stable checkout under `~/.local/share/agent-skills` and links its
+skills into the local agent roots. The links reflect edits in that checkout immediately. Run
+`~/.local/bin/skills-refresh` when you want to pull upstream changes or repair the links; it only
+fast-forwards a clean checked-out branch. Edit shared skills on a separate branch or worktree in
+the skills repository.
 
 ## Uninstall
 
