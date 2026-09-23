@@ -18,12 +18,17 @@ else
     echo "skills-refresh: unexpected origin in $repo" >&2
     exit 1
   fi
-  branch="$(git -C "$repo" branch --show-current)"
-  if [ -z "$branch" ] || [ -n "$(git -C "$repo" status --porcelain)" ]; then
-    echo "skills-refresh: checkout is detached or dirty; preserving local edits" >&2
+  if [ -n "$(git -C "$repo" status --porcelain)" ]; then
+    echo "skills-refresh: checkout is dirty; preserving local edits" >&2
     exit 1
   fi
-  git -C "$repo" pull --ff-only origin "$branch"
+  git -C "$repo" fetch origin main
+  if git -C "$repo" show-ref --verify --quiet refs/heads/main; then
+    git -C "$repo" switch main
+  else
+    git -C "$repo" switch --track -c main origin/main
+  fi
+  git -C "$repo" pull --ff-only origin main
 fi
 
 bash "$repo/bootstrap/install.sh"

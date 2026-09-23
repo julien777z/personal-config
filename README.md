@@ -49,8 +49,8 @@ After adding or editing a function, `bash-reload` (defined in `bash-reload.sh`) 
 skills, agents, and reusable rules into the local agent roots. The links reflect edits in that
 checkout immediately. Run
 `~/.local/bin/skills-refresh` when you want to pull upstream changes or repair the links; it only
-fast-forwards a clean checked-out branch. Edit shared skills on a separate branch or worktree in
-the skills repository.
+switches to and fast-forwards `main` when the refresh checkout is clean. Edit shared skills on a
+separate branch or worktree in the skills repository.
 
 ## Uninstall
 
