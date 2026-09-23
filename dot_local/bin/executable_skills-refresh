@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Refresh the canonical skills checkout without disturbing an editing branch.
 set -euo pipefail
+export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
 
 repo="$HOME/.local/share/agent-skills"
 remote='https://github.com/julien777z/skills.git'
