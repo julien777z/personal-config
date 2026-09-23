@@ -4,3 +4,5 @@ README.md
 .git
 .gitignore
 .claude*
+.codex/skills
+.cursor/skills

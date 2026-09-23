@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Refresh the canonical skills checkout without disturbing an editing branch.
+set -euo pipefail
+
+repo="$HOME/.local/share/agent-skills"
+remote='https://github.com/julien777z/skills.git'
+
+if [ ! -d "$repo/.git" ]; then
+  if [ -e "$repo" ]; then
+    echo "skills-refresh: $repo exists but is not a Git checkout" >&2
+    exit 1
+  fi
+  mkdir -p "$(dirname "$repo")"
+  git clone "$remote" "$repo"
+else
+  if [ "$(git -C "$repo" remote get-url origin)" != "$remote" ]; then
+    echo "skills-refresh: unexpected origin in $repo" >&2
+    exit 1
+  fi
+  if [ "$(git -C "$repo" branch --show-current)" != main ] ||
+     [ -n "$(git -C "$repo" status --porcelain)" ]; then
+    echo "skills-refresh: checkout is not a clean main; preserving local edits" >&2
+    exit 1
+  fi
+  git -C "$repo" pull --ff-only origin main
+fi
+
+bash "$repo/bootstrap/install.sh"
