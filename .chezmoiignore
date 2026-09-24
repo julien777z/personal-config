@@ -1,6 +1,7 @@
 setup.sh
 uninstall.sh
 README.md
+AGENTS.md
 .git
 .gitignore
 .claude*
