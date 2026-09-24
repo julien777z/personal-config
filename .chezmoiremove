@@ -3,3 +3,4 @@
 .config/shell-functions/git-purge.sh
 .config/shell-functions/shared/confirm-default-no.sh
 .config/shell-functions/shared/git-require-worktree.sh
+.local/bin/skills-refresh

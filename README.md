@@ -45,12 +45,10 @@ After adding or editing a function, `bash-reload` (defined in `bash-reload.sh`) 
 
 ## Shared agent guidance
 
-`skills-refresh` maintains a stable checkout under `~/.local/share/agent-skills` and links its
-skills, agents, and reusable rules into the local agent roots. The links reflect edits in that
-checkout immediately. Run
-`~/.local/bin/skills-refresh` when you want to pull upstream changes or repair the links; it only
-switches to and fast-forwards `main` when the refresh checkout is clean. Edit shared skills on a
-separate branch or worktree in the skills repository.
+Install shared skills, agents, and rules from the main skills checkout by running
+`bash bootstrap/install.sh` there. The installer links that checkout directly into the local
+agent roots, so edits to the checkout are visible immediately. Pull `main` in that checkout
+after a skill PR merges. Edit shared guidance on a separate branch or worktree.
 
 ## Uninstall
 
