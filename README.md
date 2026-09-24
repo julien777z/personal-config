@@ -43,6 +43,15 @@ Defined in `dot_config/shell-functions/bash-update.sh`. Does `git pull` in the r
 
 After adding or editing a function, `bash-reload` (defined in `bash-reload.sh`) re-execs the current shell so the new definitions are picked up without closing the tab.
 
+## Shared agent guidance
+
+`skills-refresh` maintains a stable checkout under `~/.local/share/agent-skills` and links its
+skills, agents, and reusable rules into the local agent roots. The links reflect edits in that
+checkout immediately. Run
+`~/.local/bin/skills-refresh` when you want to pull upstream changes or repair the links; it only
+switches to and fast-forwards `main` when the refresh checkout is clean. Edit shared skills on a
+separate branch or worktree in the skills repository.
+
 ## Uninstall
 
 ```
